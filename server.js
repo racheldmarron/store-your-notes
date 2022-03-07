@@ -9,6 +9,10 @@ const notes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
 let app = express(); 
 let PORT = process.env.PORT || 3001; 
 
+var createId = () => {
+    return 'id-' + Math.random().toString(36).substring(2, 16);
+  };
+
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json()); 
 
