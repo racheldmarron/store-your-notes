@@ -1,11 +1,6 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs"); 
-const util = require("util"); 
-// const { allowedNodeEnvironmentFlags } = require("process");
-// const { createBrotliDecompress } = require("zlib");
-// const data = require('./db/db.json'); 
-// const notes = JSON.parse(fs.readFileSync('./db/db.json', 'utf8')); 
 
 const app = express(); 
 const PORT = process.env.PORT || 3001; 
@@ -14,67 +9,67 @@ const PORT = process.env.PORT || 3001;
 //     return 'id-' + Math.random().toString(36).substring(2, 16);
 //   };
 
+// let notesData = []; 
+
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json()); 
-
-app.use(express.static(path.join(__dirname, './public')));
+app.use(express.static("public")); 
+// app.use(express.static(path.join(__dirname, './public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html')); 
+    res.sendFile(path.join(__dirname, "public/index.html")); 
 }); 
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/notes.html')); 
+    res.sendFile(path.join(__dirname, "public/notes.html")); 
 }); 
 
 app.get('/api/notes', (req, res) => {
     res.sendFile(path.join(__dirname, 'db/db.json')); 
 }); 
 
-app.get("/api/notes/:note", function(req, res) {
-    var selectNote = req.params.note;
-    console.log(selectNote);
-    return res.json(selectNote) 
-    }); 
-
-app.post("api/notes", (req, res) => {
-    const addNote = req.body; 
-    addNote.id = Date.now(); 
-    let noteData = fs.readFileSync('./db/db.json'); 
-    let noteTaker = JSON.parse(noteData); 
-
-    noteTaker.push(req.body);
-
-    fs.writeFileSync('./db/db.json', JSON.stringify(noteTaker), (err, data) => {
-        if (err) throw err;
-        res.json(noteTaker)
-    }); 
-
-    res.sendFile(path.join(__dirname, './public/notes.hmtl'));
-}); 
+app.post("/api/notes", (req, res) => {
+    fs.readFile(path.join(__dirname, "db.json"), "utf8", function(error, response) {
+        if (error) {
+            console.log(error);
+        }
+        const notes = JSON.parse(response);
+        const noteAdd = req.body;
+        const newNoteID = notes.length + 1;
+        const newNote = {
+            id: newNoteID,
+            title: noteAdd.title,
+            text: noteAdd.text
+        };
+        notes.push(newNote);
+        res.json(newNote);
+        fs.writeFile(path.join(__dirname, "db.json"), JSON.stringify(notes, null, 2), function(err) {
+            if (err) throw err;
+        });
+    });
+});
 
 app.delete("/api/notes/:id", (req, res) => {
-    let noteData = fs.readFileSync('./db/db.json');
-    let noteTaker = JSON.parse(noteData); 
-
-    const noteSave = noteTaker.find(n.id === parseInt(req.params.id)); 
-
-    const noteIndex = noteTaker.indexOf(noteSave); 
-    noteTaker.splice(noteIndex); 
-
-    fs.writeFile(__dirname + "./db/db.json", JSON.stringify(noteTaker), (err, data) => {
-        if (err) throw err; 
-        res.json(noteTaker) 
+    const deleteNote = req.params.id;
+    fs.readFile("db.json", "utf8", function(error, response) {
+        if (error) {
+            console.log(error);
+        }
+        let notes = JSON.parse(response);
+        if(deleteNote <= notes.length) {
+            res.json(notes.splice(deleteID-1,1));
+            for (let i = 0; i < notes.length; i++) {
+                notes[i].id = i+1;
+            }
+            fs.writeFile("db.json", JSON.stringify(notes, null, 2), function(err) {
+                if (err) throw err;
+            });
+        }else {
+            res.json(false);
+        }
     });
-}); 
-
-app.get("/notes", (req, res) => 
-    res.sendFile(__dirname + "./public/notes.html")); 
-
-app.getMaxListeners("*", (req, res) =>
-    res.sendFile(__dirname + "./public/index.html")); 
+});
 
 app.listen(PORT, () => {
     console.log(`App is listening at port ${PORT}`); 
 }); 
-
