@@ -5,7 +5,7 @@ const fs = require("fs");
 
 const app = express();
 
-const PORT = process.env.PORT || 9001;
+const PORT = process.env.PORT || 3001;
 
 
 let notesData = [];
