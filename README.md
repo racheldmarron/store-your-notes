@@ -29,8 +29,19 @@ The Acceptance Criteria included:
 
 ## Visual Representation 
 
+Displays index.html:
 ![](./assets/note-taker-1.png)
+<br><br> Displays notes.html:
 ![](./assets/note-taker-2.png)
+
+<br><br>Displays adding a note title and body:
+![](./assets/note-taker-3.png)
+
+<br><br>Displays note being saved and added to left hand column:
+![](./assets/note-taker-4.png)
+
+<br><br>Displays note being deleted and removed from left hand column:
+![](./assets/note-taker-5.png)
 
 ## Contributors
 
