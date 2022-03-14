@@ -7,7 +7,10 @@ const app = express();
 
 const PORT = process.env.PORT || 3001;
 
-
+var createId = () => {
+    return 'id-' + Math.random().toString(36).substring(2, 16);
+  };
+  
 let notesData = [];
 
 
